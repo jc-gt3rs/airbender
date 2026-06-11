@@ -20,8 +20,7 @@ struct FanControlPopoverView: View {
 
                 switch viewModel.connectionState {
                 case .connecting:
-                    ProgressView("Connecting to helper…")
-                        .padding(.vertical, 24)
+                    connectingView
                 case .error(let message):
                     errorView(message)
                 case .connected:
@@ -51,6 +50,14 @@ struct FanControlPopoverView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            Button {
+                NSApplication.shared.terminate(nil)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.secondary)
+                    .font(.title3)
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -60,6 +67,18 @@ struct FanControlPopoverView: View {
         case .manual: return "Manual Override"
         case .max: return "Maximum Speed"
         }
+    }
+
+    private var connectingView: some View {
+        VStack(spacing: 12) {
+            ProgressView("Connecting to helper...")
+
+            Button(viewModel.isInstallingHelper ? "Repairing..." : "Repair Helper") {
+                Task { await viewModel.installOrRepairHelper() }
+            }
+            .disabled(viewModel.isInstallingHelper)
+        }
+        .padding(.vertical, 24)
     }
 
     private var fanList: some View {
@@ -75,6 +94,7 @@ struct FanControlPopoverView: View {
                         }
                     )
                 )
+                .disabled(viewModel.activeMode != .manual)
             }
         }
     }
@@ -88,6 +108,14 @@ struct FanControlPopoverView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(GlassButtonStyle(isActive: viewModel.activeMode == .system))
+
+            Button {
+                Task { await viewModel.setManualMode() }
+            } label: {
+                Label("Manual", systemImage: "hand.tap")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(GlassButtonStyle(isActive: viewModel.activeMode == .manual, tint: .blue))
 
             Button {
                 Task { await viewModel.setMaxSpeed() }
@@ -109,8 +137,19 @@ struct FanControlPopoverView: View {
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            Button("Retry") {
-                Task { await viewModel.refresh() }
+            HStack(spacing: 8) {
+                Button("Retry") {
+                    Task { await viewModel.refresh() }
+                }
+
+                Button(viewModel.isInstallingHelper ? "Repairing..." : "Repair Helper") {
+                    Task { await viewModel.installOrRepairHelper() }
+                }
+                .disabled(viewModel.isInstallingHelper)
+
+                Button("Open Settings") {
+                    viewModel.openHelperApprovalSettings()
+                }
             }
         }
         .padding(.vertical, 24)
@@ -148,8 +187,8 @@ private struct FanSliderRow: View {
 
             Slider(
                 value: $displayValue,
-                in: 0...100,
-                step: 1,
+                in: 25...100,
+                step: 25,
                 onEditingChanged: { editing in
                     if !editing {
                         percentage = Int(displayValue)

@@ -7,20 +7,20 @@
 
 import Foundation
 
-@objc enum FanMode: Int, Codable {
+@objc(FanMode) enum FanMode: Int, Codable {
     case system = 0
     case manual = 1
     case max = 2
 }
 
-@objc protocol HelperProtocol {
+@objc(HelperProtocol) protocol HelperProtocol {
     func getFanInfo(reply: @escaping ([FanInfoDTO], Error?) -> Void)
     func setFanMode(_ mode: FanMode, percentages: [NSNumber], reply: @escaping (Error?) -> Void)
     func getVersion(reply: @escaping (String) -> Void)
 }
 
-@objc final class FanInfoDTO: NSObject, NSSecureCoding, Codable, @unchecked Sendable {
-    static var supportsSecureCoding: Bool = true
+@objc(FanInfoDTO) final class FanInfoDTO: NSObject, NSSecureCoding, Codable, @unchecked Sendable {
+    public static var supportsSecureCoding: Bool { return true }
 
     let index: Int
     let currentRPM: Double

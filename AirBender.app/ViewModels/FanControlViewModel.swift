@@ -21,6 +21,7 @@ final class FanControlViewModel {
     var activeMode: FanMode = .system
     var connectionState: ConnectionState = .connecting
     var isApplyingChange: Bool = false
+    var isInstallingHelper: Bool = false
 
     private let client = HelperClient.shared
     private var refreshTask: Task<Void, Never>?
@@ -57,6 +58,28 @@ final class FanControlViewModel {
     }
 
     @MainActor
+    func installOrRepairHelper() async {
+        guard !isInstallingHelper else { return }
+        isInstallingHelper = true
+        connectionState = .connecting
+        defer { isInstallingHelper = false }
+
+        let client = self.client
+        do {
+            try await Task.detached {
+                try client.installOrRepairHelper(forceRepair: true)
+            }.value
+            await refresh()
+        } catch {
+            connectionState = .error(error.localizedDescription)
+        }
+    }
+
+    func openHelperApprovalSettings() {
+        client.openHelperApprovalSettings()
+    }
+
+    @MainActor
     func applyManualSpeed(fanIndex: Int, percentage: Int) async {
         guard fans.indices.contains(fanIndex) else { return }
         sliderPercentages[fanIndex] = percentage
@@ -79,6 +102,18 @@ final class FanControlViewModel {
         do {
             try await client.setMode(.max, percentages: sliderPercentages)
             activeMode = .max
+        } catch {
+            connectionState = .error(error.localizedDescription)
+        }
+    }
+
+    @MainActor
+    func setManualMode() async {
+        isApplyingChange = true
+        defer { isApplyingChange = false }
+        do {
+            try await client.setMode(.manual, percentages: sliderPercentages)
+            activeMode = .manual
         } catch {
             connectionState = .error(error.localizedDescription)
         }

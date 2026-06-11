@@ -17,7 +17,7 @@
 		A100000008 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F100000020 /* ServiceManagement.framework */; };
 		B100000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F100000010 /* main.swift */; };
 		B100000002 /* HelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F100000011 /* HelperService.swift */; };
-		B100000003 /* SMCWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F100000012 /* SMCWrapper.swift */; };
+		B100000003 /* SMCWrapperObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = F100000012 /* SMCWrapperObjC.m */; };
 		B100000004 /* SMC.c in Sources */ = {isa = PBXBuildFile; fileRef = F100000013 /* SMC.c */; };
 		B100000005 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F100000006 /* HelperProtocol.swift */; };
 		B100000006 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F100000021 /* IOKit.framework */; };
@@ -75,7 +75,7 @@
 		F100000009 /* AirBender.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AirBender.entitlements; sourceTree = "<group>"; };
 		F100000010 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		F100000011 /* HelperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperService.swift; sourceTree = "<group>"; };
-		F100000012 /* SMCWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCWrapper.swift; sourceTree = "<group>"; };
+		F100000012 /* SMCWrapperObjC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMCWrapperObjC.m; sourceTree = "<group>"; };
 		F100000013 /* SMC.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMC.c; sourceTree = "<group>"; };
 		F100000014 /* SMC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMC.h; sourceTree = "<group>"; };
 		F100000015 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
@@ -180,7 +180,7 @@
 		G210000000 /* SMCClient */ = {
 			isa = PBXGroup;
 			children = (
-				F100000012 /* SMCWrapper.swift */,
+				F100000012 /* SMCWrapperObjC.m */,
 				F100000013 /* SMC.c */,
 				F100000014 /* SMC.h */,
 				F100000015 /* module.modulemap */,
@@ -306,7 +306,7 @@
 			files = (
 				B100000001 /* main.swift in Sources */,
 				B100000002 /* HelperService.swift in Sources */,
-				B100000003 /* SMCWrapper.swift in Sources */,
+				B100000003 /* SMCWrapperObjC.m in Sources */,
 				B100000004 /* SMC.c in Sources */,
 				B100000005 /* HelperProtocol.swift in Sources */,
 			);
@@ -454,10 +454,12 @@
 				CODE_SIGN_ENTITLEMENTS = AirBender.app/AirBender.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = N392C48YLY;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = AirBender.app/Info.plist;
@@ -504,10 +506,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = N392C48YLY;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/com.airbender.helper/SMCClient";

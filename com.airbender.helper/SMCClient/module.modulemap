@@ -2,3 +2,9 @@ module SMCBridge {
     header "SMC.h"
     export *
 }
+
+module SMCWrapperObjC {
+    header "SMCWrapperObjC.h"
+    export *
+    requires objc
+}
