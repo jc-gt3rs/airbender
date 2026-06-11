@@ -1,0 +1,16 @@
+{
+  "source": "/Users/johncrisantor/Developer/airbender/AirBender.app/AirBenderApp.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "AirBender",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 15
+        }
+      }
+    ]
+  },
+  "version": 1
+}
