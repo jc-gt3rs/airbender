@@ -7,8 +7,24 @@
 
 import SwiftUI
 
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        Task {
+            do {
+                try await HelperClient.shared.setMode(.system, percentages: [])
+                NSLog("[AirBender] Successfully set mode to system on termination.")
+            } catch {
+                NSLog("[AirBender] Failed to set mode to system on termination: \(error)")
+            }
+            NSApplication.shared.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+}
+
 @main
 struct AirBenderApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var viewModel = FanControlViewModel()
 
     init() {
