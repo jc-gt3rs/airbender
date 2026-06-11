@@ -22,12 +22,24 @@ final class HelperClient: @unchecked Sendable {
     @discardableResult
     func installHelper() -> Bool {
         let service = SMAppService.daemon(plistName: "com.airbender.helper.plist")
-        do {
-            try service.register()
-            NSLog("[AirBender] Helper installed successfully via SMAppService")
+        
+        switch service.status {
+        case .enabled:
+            NSLog("[AirBender] Helper is already enabled via SMAppService.")
             return true
-        } catch {
-            NSLog("[AirBender] SMAppService failed: \(error.localizedDescription)")
+        case .requiresApproval:
+            NSLog("[AirBender] ⚠️ HELPER DISABLED IN SYSTEM SETTINGS. Please go to System Settings > General > Login Items and turn ON the background item for AirBender!")
+            return true // return true so we still attempt connection, but it will fail until they approve
+        case .notFound:
+            do {
+                try service.register()
+                NSLog("[AirBender] Helper installed successfully. Status: \(service.status.rawValue)")
+                return true
+            } catch {
+                NSLog("[AirBender] SMAppService failed to register: \(error.localizedDescription)")
+                return false
+            }
+        @unknown default:
             return false
         }
     }

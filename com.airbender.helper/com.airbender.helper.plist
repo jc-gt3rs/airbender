@@ -6,7 +6,7 @@
     <string>com.airbender.helper</string>
 
     <key>BundleProgram</key>
-    <string>Contents/MacOS/com.airbender.helper</string>
+    <string>com.airbender.helper</string>
 
     <key>MachServices</key>
     <dict>
