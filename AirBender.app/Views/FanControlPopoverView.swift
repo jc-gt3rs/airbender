@@ -12,7 +12,7 @@ struct FanControlPopoverView: View {
 
     var body: some View {
         ZStack {
-            VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow)
+            VisualEffectBackground(material: .menu, blendingMode: .behindWindow)
                 .ignoresSafeArea()
 
             VStack(spacing: 16) {
@@ -32,16 +32,22 @@ struct FanControlPopoverView: View {
         }
     }
 
+    private var maxRPM: Double {
+        viewModel.fans.map(\.currentRPM).max() ?? 0
+    }
+
+    private var animationSpeed: Double {
+        let rpm = maxRPM
+        if rpm < 500 { return 0.2 }
+        if rpm > 6000 { return 3.0 }
+        return max(0.2, rpm / 2000.0)
+    }
+
     private var header: some View {
         HStack {
-            if #available(macOS 15.0, *) {
-                Image(systemName: "fan.fill")
-                    .font(.title2)
-                    .symbolEffect(.rotate, options: .repeating, isActive: viewModel.activeMode != .system)
-            } else {
-                Image(systemName: "fan.fill")
-                    .font(.title2)
-            }
+            Image(systemName: "fan.fill")
+                .font(.title2)
+                .modifier(ContinuousSpinModifier(rpm: maxRPM))
             VStack(alignment: .leading, spacing: 2) {
                 Text("AirBender")
                     .font(.headline)
@@ -223,5 +229,31 @@ private struct GlassButtonStyle: ButtonStyle {
             .foregroundStyle(isActive ? tint : Color.primary)
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+struct ContinuousSpinModifier: ViewModifier {
+    let rpm: Double
+    @State private var angle: Double = 0
+    let timer = Timer.publish(every: 1.0 / 60.0, on: .main, in: .common).autoconnect()
+
+    func body(content: Content) -> some View {
+        content
+            .rotationEffect(.degrees(angle))
+            .onReceive(timer) { _ in
+                if rpm > 100 {
+                    // Let's map RPM to spin speed.
+                    // Assuming max typical RPM is ~6000.
+                    // 6000 RPM means it should spin fast visually, say 3 rotations per second.
+                    // 3 rotations/sec = 1080 degrees/sec.
+                    // per 1/60th sec frame = 18 degrees/frame.
+                    // Formula: (rpm / 6000.0) * 18.0
+                    let speed = (rpm / 6000.0) * 18.0
+                    angle += speed
+                    if angle >= 360 {
+                        angle -= 360
+                    }
+                }
+            }
     }
 }
