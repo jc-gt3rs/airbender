@@ -37,6 +37,10 @@ struct AirBenderApp: App {
         }
     }
 
+    private var maxRPM: Double {
+        viewModel.fans.map(\.currentRPM).max() ?? 0
+    }
+
     var body: some Scene {
         MenuBarExtra("AirBender", systemImage: "fan.fill") {
             FanControlPopoverView(viewModel: viewModel)
